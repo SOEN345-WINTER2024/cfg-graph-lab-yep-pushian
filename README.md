@@ -1,105 +1,54 @@
-# Soot Tutorial
-[![Build Status](https://travis-ci.com/noidsirius/SootTutorial.svg?branch=master)](https://travis-ci.com/noidsirius/SootTutorial)
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/noidsirius/SootTutorial)
-[![Docker Pull](https://img.shields.io/docker/pulls/noidsirius/soot_tutorial)](https://hub.docker.com/r/noidsirius/soot_tutorial)
+Yeprem Antranik #40204291
 
 
-This repository contains (will contain) several simple examples of static program analysis in Java using [Soot](https://github.com/Sable/soot).
-
-## Who this tutorial is for?
-Anybody who knows Java programming and wants to do some static analysis in practice but does not know anything about Soot and static analysis in theory.
-
-If you have some prior knowledge about static program analysis I suggest you learn Soot from [here](https://github.com/Sable/soot/wiki/Tutorials).
-
-### [Why another tutorial for Soot?](docs/Other/Motivation.md)
-
-## Setup
-In short, use Java 8 and run `./gradlew build`. For more information and Docker setup, follow this [link](docs/Setup/). 
-
-## Chapters
-### 1: Get your hands dirty
-
-In this chapter, you will visit a very simple code example to be familiar with Soot essential data structures and **Jimple**, Soot's principle intermediate representation.
-
-* `./gradlew run --args="HelloSoot"`: The Jimple representation of the [printFizzBuzz](demo/HelloSoot/FizzBuzz.java) method alongside the branch statement.
-* `./gradlew run --args="HelloSoot draw"`: The visualization of the [printFizzBuzz](demo/HelloSoot/FizzBuzz.java) control-flow graph.
+1) CFG
+<img width="835" alt="Screenshot 2024-03-08 at 4 01 22 PM" src="https://github.com/SOEN345-WINTER2024/cfg-graph-lab-yep-pushian/assets/102338675/2f0da2ab-00f3-430f-8ca0-ff7108583057">
 
 
 
-|Title |Tutorial | Soot Code        | Example Input  |
-| :---: |:-------------: |:-------------:| :-----:|
-|Hello Soot |[Doc](docs/1/)      | [HelloSoot.java](src/main/java/dev/navids/soottutorial/hellosoot/HelloSoot.java) | [FizzBuzz.java](demo/HelloSoot/FizzBuzz.java) |
+2) Node Coverage
+N0 = {0}, Nf = {20}
 
-<img src="docs/1/images/cfg.png" alt="Control Flow Graph" width="400"/>
+TR= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}
 
-### 2: Know the basic APIs
-
-In this chapter, you get familiar with some basic but useful methods in Soot to help read, analyze, and even update java code.
-
-* `./gradlew run --args="BasicAPI"`: Analyze the class [Circle](demo/BasicAPI/Circle.java).
-* `./gradlew run --args="BasicAPI draw"`: Analyze the class [Circle](demo/BasicAPI/Circle.java) and draws the call graph.
-
-|Title |Tutorial | Soot Code        | Example Input  |
-| :---: |:-------------: |:-------------:| :-----:|
-|Basic API |[Doc](https://medium.com/@noidsirius/know-the-basic-tools-in-soot-18f394318a9c)| [BasicAPI.java](src/main/java/dev/navids/soottutorial/basicapi/BasicAPI.java) | [Circle](demo/BasicAPI/Circle.java) |
+Test path = { {0,1,2,0}, {0,12,20}, {0,3,20}, {0,4,20}, {0,5,20}, {0,6,20}, {0,7,20}, {0,8,20}, {0,9,20},
+{0,10,20}, {0,11,20}, {0,12,20}, {0,13,20}, {0,14,20}, {0,15,16,20},
+{0,15,17,20}, {0,15,18,20}, {0,15,19,20} }
 
 
-<img src="docs/2/images/callgraph.png" alt="Call Graph" width="400"/>
+3) Edge Coverage
+   
+TR = { (0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9),
+(0,10), (0,11), (0,12), (0,13), (0,14), (0,15),
+(0,15), (15,16), (15,17), (15,18), (15,19), (1,20), (2,20), (3,20)
+(4,20), (5,20), (6,20), (7,20), (8,20), (9,20), (10,20), (11,20), (12,20)
+(13,20), (14,20), (15,20), (17,20), (18,20), (19,20) }
 
-### 3: Android Instrumentation
 
-In this chapter, you learn how to insert code into Android apps (without having their source code) using Soot. To run the code, you need Android SDK (check this [link](docs/Setup/)).
+Test path = { (0,1,2,0), (0,12,20), (0,3,20), (0,4,20), (0,5,20), (0,6,20), (0,7,20), (0,8,20), (0,9,20),
+(0,10,20), (0,11,20), (0,12,20), (0,13,20), (0,14,20), (0,15,16,20),
+(0,15,17,20), (0,15,18,20), (0,15,19,20) }
 
-* `./gradlew run --args="AndroidLogger"`: Insert logging method calls at the beginning of APK methods of [Numix Calculator](demo/Android/calc.apk).
-* `./gradlew run --args="AndroidClassInjector"`: Create a new class from scratch and inject it to the  [Numix Calculator](demo/Android/calc.apk).
 
-The instrumented APK is located in `demo/Android/Instrumented`. You need to sign it in order to install on an Android device:
-```sh
-cd ./demo/Android
-# on Windows, replace 'sign.sh' by 'sign.ps1'
-./sign.sh Instrumented/calc.apk key "android"
-adb install -r -t Instrumented/calc.apk
-```
-To see the logs, run `adb logcat | grep -e "<SOOT_TUTORIAL>"`
+4) Edge-pair Coverage:
 
-|Title |Tutorial | Soot Code        | Example APK|
-| :---: |:-------------: |:-------------:| :-----:|
-|Log method calls in an APK| [Doc](https://medium.com/@noidsirius/instrumenting-android-apps-with-soot-dd6f146ff4d2)| [AndroidLogger.java](src/main/java/dev/navids/soottutorial/android/AndroidLogger.java) | [Numix Calculator](demo/Android/calc.apk) (from [F-Droid](https://f-droid.org/en/packages/com.numix.calculator/))|
-|Create and inject a class into an APK| [Doc](https://medium.com/@noidsirius/instrumenting-android-apps-with-soot-dd6f146ff4d2) | [AndroidClassInjector.java](src/main/java/dev/navids/soottutorial/android/AndroidClassInjector.java) | [Numix Calculator](demo/Android/calc.apk) (from [F-Droid](https://f-droid.org/en/packages/com.numix.calculator/))|
+TR = { (0,1,20), (0,2,20), (0,3,20), (0,4,20), (0,5,20), (0,6,20), (0,7,20), (0,8,20), (0,9,20),
+(0,10,20), (0,11,20), (0,12,20), (0,13,20), (0,14,20), (0,15,16,20),
+(0,15,17,20), (0,15,18,20), (0,15,19,20), (0,15,16), (0,15,17) }
 
-<img src="docs/3/images/packs.png" alt="Soot Packs + Dexpler" width="400"/>
 
-### 4: Call graphs and PointsTo Analysis in Android
+Test path = { (0,1,2,0), (0,2,20), (0,3,20), (0,4,20), (0,5,20), (0,6,20), (0,7,20), (0,8,20), (0,9,20),
+(0,10,20), (0,11,20), (0,12,20), (0,13,20), (0,14,20), (0,15,16,20),
+(0,15,17,20), (0,15,18,20), (0,15,19,20) }
 
-This chapter gives you a brief overview o call graphs and PointsTo analysis in Android and you learn how to create calls graphs using FlowDroid. The source code of the example code is [here](demo/Android/STDemoApp). To run the code, you need Android SDK (check this [link](docs/Setup/)).
 
-* `./gradlew run --args="AndroidCallGraph <CG_Algorithm> (draw)"`: Create the call graph of [SootTutorial Demo App](demo/Android/st_demo.apk) using `<CG_Algorithm>` algorithm and print information such as reachable methods or the number of edges.
-    * `<CG_Algorithm>` can be `SPARK` or `CHA`
-    * `draw` argument is optional, if provided a visualization of call graph will shown.
-    * For example, `./gradlew run --args="AndroidCallGraph SPARK draw"` visualizes the call graph generated by SPARK algorithm.
-* `./gradlew run --args="AndroidPTA"`: Perform PointsTo and Alias Analysis on [SootTutorial Demo App](demo/Android/st_demo.apk) using FlowDroid.
-
-|Title |Tutorial | Soot Code        | Example APK|
-| :---: |:-------------: |:-------------:| :-----:|
-|Call graphs in Android| [Doc](https://medium.com/geekculture/generating-call-graphs-in-android-using-flowdroid-pointsto-analysis-7b2e296e6697)| [AndroidCallgraph.java](src/main/java/dev/navids/soottutorial/android/AndroidCallgraph.java) | [SootTutorial Demo App](demo/Android/st_demo.apk) ([source code](demo/Android/STDemoApp))|
-|PointsTo Analysis in Android| [Doc](https://medium.com/geekculture/generating-call-graphs-in-android-using-flowdroid-pointsto-analysis-7b2e296e6697)| [AndroidPointsToAnalysis.java](src/main/java/dev/navids/soottutorial/android/AndroidPointsToAnalysis.java) | [SootTutorial Demo App](demo/Android/st_demo.apk) ([source code](demo/Android/STDemoApp))|
-
-<img src="docs/4/images/Spark_CG.png" alt="The call graph of SootTutorial Demo app" width="400"/>
+5)
+<img width="418" alt="Screenshot 2024-03-08 at 4 03 22 PM" src="https://github.com/SOEN345-WINTER2024/cfg-graph-lab-yep-pushian/assets/102338675/260ce201-ab23-4d7d-a02c-d4ded61f05ef">
 
 
 
-### 5: Some *Real* Static Analysis (:construction: WIP)
-
-* `./gradlew run --args="UsageFinder 'void println(java.lang.String)' 'java.io.PrintStream"`: Find usages of the method with the given subsignature in all methods of [UsageExample.java](demo/IntraAnalysis/UsageExample.java).
-* `./gradlew run --args="UsageFinder 'void println(java.lang.String)' 'java.io.PrintStream"`: Find usages of the method with the given subsignature of the given class signature in all methods of [UsageExample.java](demo/IntraAnalysis/UsageExample.java).
 
 
-|Title |Tutorial | Soot Code        | Example Input  |
-| :---: |:-------------: |:-------------:| :-----:|
-|Find usages of a method| | [UsageFinder.java](src/main/java/dev/navids/soottutorial/intraanalysis/usagefinder/UsageFinder.java) | [UsageExample.java](demo/IntraAnalysis/usagefinder/UsageExample.java) |
-|Null Pointer Analysis ||[NullPointerAnalysis](src/main/java/dev/navids/soottutorial/intraanalysis/npanalysis/) | [NullPointerExample.java](demo/IntraAnalysis/NullPointerExample.java) |
 
-### 6: Interprocedural analysis (:construction: WIP)
-|Title |Tutorial | Soot Code        | Example Input  |
-| :---: |:-------------: |:-------------:| :-----:|
-| | | | |
+
+
